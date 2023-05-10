@@ -180,6 +180,19 @@ const FormContainer = styled.form`
       cursor: not-allowed;
       outline-offset:0;
   }
+  @media only screen and (max-width: 600px) {
+    outline: none;
+    width: fit-content;
+  }
+  }
+  @media only screen and (max-width: 600px) {
+    width: 90%;
+  }
+  @media only screen and (max-width: 800px) {
+    width: 80%;
+  }
+  @media only screen and (max-width: 1000px) {
+    width: 70%;
   }
 `;
 
