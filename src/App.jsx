@@ -11,20 +11,54 @@ function App() {
   });
 
   const handleChange = (event) => {
+    const { name, value } = event.target;
 
-    const {name, value} = event.target
+    setData((prev) => {
+      const newData = { ...prev, [name]: value };
 
-    setData((prev)=>{
-      const newData = {...prev, [name]: value }
-
-      return newData
-    })
+      return newData;
+    });
   };
+
+  const calculateProgress = () => {
+    let value = 0;
+    let amountToAdd = 25;
+
+    if (data.fullName) {
+      const explodeString = data.fullName.split(" ");
+      if (explodeString[1]) {
+        value += amountToAdd;
+      }
+    }
+
+    if (data.email) {
+      let pattern = /[a-z0-9]+@[a-z]+\.[a-z]{2,}$/
+      if(pattern.test(data.email)){
+        value += amountToAdd;
+      }
+      
+    }
+
+    if (data.maritalStatus) {
+      value += amountToAdd;
+    }
+
+    if (data.gender) {
+      value += amountToAdd;
+    }
+
+    return value;
+  };
+
+  const handleSubimit = ()=>{
+    alert('Formulario enviado com sucesso!')
+  }
+
   return (
     <Page>
       <FormContainer>
         <BarContainer>
-          <Bar/>
+          <Bar style={{ width: `${calculateProgress()}%` }} />
         </BarContainer>
         <FormGroup>
           <label htmlFor="">Nome Completo</label>
@@ -34,6 +68,8 @@ function App() {
             value={data.Name}
             placeholder="Digite seu nome completo..."
             onChange={handleChange}
+            required
+            pattern="[a-zA-Z ]*"
           />
         </FormGroup>
         <FormGroup>
@@ -44,11 +80,19 @@ function App() {
             value={data.email}
             placeholder="digite seu email..."
             onChange={handleChange}
+            required
+            pattern="[a-z0-9]+@[a-z]+\.[a-z]{2,}$"
           />
         </FormGroup>
         <FormGroup>
           <label htmlFor="">Estado Civil</label>
-          <select name="maritalStatus" id="" value={data.maritalStatus} onChange={handleChange}>
+          <select
+            name="maritalStatus"
+            id=""
+            value={data.maritalStatus}
+            onChange={handleChange}
+            required
+          >
             <option value="">Selecione...</option>
             <option value="solteiro">Solteiro</option>
             <option value="casado">Casado</option>
@@ -64,7 +108,7 @@ function App() {
                 name="gender"
                 value="masculino"
                 onChange={handleChange}
-                checked={data.gender === 'masculino'}
+                checked={data.gender === "masculino"}
               />{" "}
               Masculino
             </span>
@@ -74,13 +118,13 @@ function App() {
                 name="gender"
                 value="feminino"
                 onChange={handleChange}
-                checked={data.gender === 'feminino'}
+                checked={data.gender === "feminino"}
               />{" "}
               Feminino
             </span>
           </RadioInputs>
         </FormGroup>
-        <button type="submit">Enviar Formulario</button>
+        <button type="submit" onClick={handleSubimit} disabled={calculateProgress()!== 100}>Enviar Formulario</button>
       </FormContainer>
     </Page>
   );
@@ -129,8 +173,20 @@ const FormContainer = styled.form`
     :is(:hover, :focus) {
       outline-offset: 3px;
       transition: 150ms;
+      cursor: pointer;
     }
+    :disabled{
+      filter: contrast(0.8);
+      cursor: not-allowed;
+      outline-offset:0;
   }
+  }
+`;
+
+const shake = keyframes`
+  25%{transform:translateX(4px)}
+  50%{transform:translateX(-4px)}
+  75%{transform:translateX(4px)}
 `;
 
 const FormGroup = styled.div`
@@ -152,8 +208,8 @@ const FormGroup = styled.div`
     :focus-visible {
       outline: 1px solid #9718fb;
     }
-    :invalid{
-      animation: shake 300ms;
+    :invalid {
+      animation: 300ms ${shake} ease-out;
       color: red;
     }
   }
@@ -174,17 +230,13 @@ const BarContainer = styled.div`
   width: 100%;
   border: 1px solid #c3c3c3;
   border-radius: 10px;
-`
+  transition: 300ms;
+`;
 
 const Bar = styled.div`
-  background-image: url('./assets/Frame.svg');
-  width: 25%;
+  background-image: url("./assets/Frame.svg");
   height: 1rem;
+  width: 0;
   border-radius: 10px;
-`
-
-const shake = keyframes`
-  25%{transform:translateX(4px)}
-  50%{transform:translateX(-4px)}
-  75%{transform:translateX(4px)}
-`
+  transition: width 1s ease;
+`;
